@@ -14,8 +14,8 @@
 package main
 
 import (
-	conductor "github.com/ggrcha/conductor-go-client"
-	"github.com/ggrcha/conductor-go-client/task/sample"
+	conductor "github.com/flaviostutz/conductor-go-client"
+	"github.com/flaviostutz/conductor-go-client/task/sample"
 )
 
 func main() {

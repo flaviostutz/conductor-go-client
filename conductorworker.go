@@ -19,7 +19,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ggrcha/conductor-go-client/task"
+	"github.com/flaviostutz/conductor-go-client/task"
 )
 
 var (

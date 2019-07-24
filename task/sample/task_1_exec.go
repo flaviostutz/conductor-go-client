@@ -16,7 +16,7 @@ package sample
 import (
 	"log"
 
-	"github.com/ggrcha/conductor-go-client/task"
+	"github.com/flaviostutz/conductor-go-client/task"
 )
 
 // Implementation for "task_1"

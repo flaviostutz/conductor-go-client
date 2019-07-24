@@ -1,3 +1,3 @@
-module github.com/ggrcha/conductor-go-client
+module github.com/flaviostutz/conductor-go-client
 
 go 1.12

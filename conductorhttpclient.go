@@ -188,7 +188,11 @@ func (c *ConductorHttpClient) UpdateTask(taskBody string) (string, error) {
 }
 
 func (c *ConductorHttpClient) PollForTask(taskType string, workerid string) (string, error) {
-	url := c.httpClient.MakeUrl("/tasks/poll/{taskType}", "{taskType}", taskType)
+	return c.PollForTaskTimeout(taskType, workerid, 0)
+}
+
+func (c *ConductorHttpClient) PollForTaskTimeout(taskType string, workerid string, longPollingTimeout int) (string, error) {
+	url := c.httpClient.MakeUrl("/tasks/poll/{taskType}?timeout={timeout}", "{taskType}", taskType, "{timeout}", fmt.Sprintf("%d", longPollingTimeout))
 	params := map[string]string{"workerid": workerid}
 	outputString, err := c.httpClient.Get(url, params, nil)
 	if err != nil {

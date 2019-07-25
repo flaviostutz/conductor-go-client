@@ -33,15 +33,17 @@ func init() {
 }
 
 type ConductorWorker struct {
-	ConductorHttpClient *ConductorHttpClient
-	ThreadCount         int
-	PollingInterval     int
+	ConductorHttpClient       *ConductorHttpClient
+	ThreadCount               int
+	PollingInterval           int
+	LongPollingTimeoutSeconds int
 }
 
-func NewConductorWorker(baseUrl string, threadCount int, pollingInterval int) *ConductorWorker {
+func NewConductorWorker(baseUrl string, threadCount int, pollingInterval int, longPollingTimeoutSeconds int) *ConductorWorker {
 	conductorWorker := new(ConductorWorker)
 	conductorWorker.ThreadCount = threadCount
 	conductorWorker.PollingInterval = pollingInterval
+	conductorWorker.LongPollingTimeoutSeconds = longPollingTimeoutSeconds
 	conductorHttpClient := NewConductorHttpClient(baseUrl)
 	conductorWorker.ConductorHttpClient = conductorHttpClient
 	return conductorWorker
@@ -77,7 +79,7 @@ func (c *ConductorWorker) PollAndExecute(taskType string, executeFunction func(t
 		time.Sleep(time.Duration(c.PollingInterval) * time.Millisecond)
 
 		// Poll for Task taskType
-		polled, err := c.ConductorHttpClient.PollForTask(taskType, hostname)
+		polled, err := c.ConductorHttpClient.PollForTaskTimeout(taskType, hostname, c.LongPollingTimeoutSeconds)
 		if err != nil {
 			log.Println("Error Polling task:", err.Error())
 			continue

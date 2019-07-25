@@ -14,6 +14,7 @@
 package conductor
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -85,26 +86,30 @@ func (c *ConductorWorker) PollAndExecute(taskType string, executeFunction func(t
 			continue
 		}
 		if polled == "" || polled == "[]" {
-			log.Println("No task found for:", taskType)
+			log.Println("No tasks found for:", taskType)
 			continue
 		}
 
-		// Parse Http response into Task
-		parsedTask, err := task.ParseTask(polled)
-		if err != nil {
-			log.Println("Error Parsing task:", err.Error())
+		ts := make([]task.Task, 0)
+		err1 := json.Unmarshal([]byte(polled), &ts)
+		if err1 != nil {
+			log.Println("Error parsing result array:", err1)
 			continue
 		}
 
-		// Found a task, so we send an Ack
-		_, ackErr := c.ConductorHttpClient.AckTask(parsedTask.TaskId, hostname)
-		if ackErr != nil {
-			log.Println("Error Acking task:", ackErr.Error())
-			continue
-		}
+		for _, parsedTask := range ts {
+			parsedTask.CallbackFromWorker = true
 
-		// Execute given function
-		c.Execute(parsedTask, executeFunction)
+			// Found a task, so we send an Ack
+			_, ackErr := c.ConductorHttpClient.AckTask(parsedTask.TaskId, hostname)
+			if ackErr != nil {
+				log.Println("Error Acking task:", ackErr.Error())
+				continue
+			}
+
+			// Execute given function
+			c.Execute(&parsedTask, executeFunction)
+		}
 	}
 }
 

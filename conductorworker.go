@@ -84,7 +84,7 @@ func (c *ConductorWorker) PollAndExecute(taskType string, executeFunction func(t
 			log.Println("Error Polling task:", err.Error())
 			continue
 		}
-		if polled == "" {
+		if polled == "" || polled == "[]" {
 			log.Println("No task found for:", taskType)
 			continue
 		}
